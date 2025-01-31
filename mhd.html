@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey to Love - Win Inas's Heart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4b6e;
+            --secondary-color: #ffd1dc;
+            --accent-color: #ff2d55;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+
+        .game-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .heart {
+            color: var(--primary-color);
+            font-size: 2em;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .floating-item {
+            position: fixed;
+            top: -20px;
+            font-size: 24px;
+            animation: float-up 4s linear forwards;
+            opacity: 0;
+            z-index: 1000;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-50vh) rotate(180deg); opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .progress {
+            height: 25px;
+            background-color: var(--secondary-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.3) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .question-card {
+            min-height: 250px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-love {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(255,75,110,0.3);
+        }
+
+        .btn-love:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,75,110,0.4);
+            color: white;
+        }
+
+        .btn-love::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                rgba(255,255,255,0.2),
+                rgba(255,255,255,0)
+            );
+            transform: rotate(45deg);
+            animation: button-shine 3s infinite;
+        }
+
+        @keyframes button-shine {
+            0% { transform: rotate(45deg) translateY(-100%); }
+            100% { transform: rotate(45deg) translateY(100%); }
+        }
+
+        .love-meter {
+            width: 60px;
+            height: 200px;
+            border: 3px solid var(--primary-color);
+            border-radius: 30px;
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            overflow: hidden;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 20px rgba(255,75,110,0.2);
+        }
+
+        .love-level {
+            background: linear-gradient(to top, var(--primary-color), var(--accent-color));
+            width: 100%;
+            height: 0%;
+            position: absolute;
+            bottom: 0;
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            margin-bottom: 30px;
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(255,75,110,0.3);
+        }
+
+        .profile-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .mini-heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float-around 3s linear infinite;
+        }
+
+        @keyframes float-around {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(0, -100px) rotate(360deg); }
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: firework-explode 2s ease-out forwards;
+        }
+
+        @keyframes firework-explode {
+            0% { transform: translateY(0); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-500px); opacity: 0; }
+        }
+
+        .memory-canvas {
+            background: linear-gradient(135deg, #fff5f7, #ffe4e8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fff5f7, #ffe4e8);
+            border: none;
+            border-radius: 20px;
+        }
+
+        .score-display {
+            font-size: 1.2em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .love-quote {
+            font-style: italic;
+            color: #666;
+            margin: 15px 0;
+        }
+
+        /* Badges */
+        .achievement-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin: 10px;
+            box-shadow: 0 3px 10px rgba(255,75,110,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .achievement-badge:hover {
+            transform: scale(1.1);
+        }
+
+        /* Photo Album */
+        .photo-album {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .memory-photo {
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--secondary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            transition: transform 0.3s ease;
+        }
+
+        .memory-photo:hover {
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="game-container p-4 mx-auto">
+            <div class="profile-container">
+                <div class="profile-picture">
+                    💝
+                    <div class="profile-hearts" id="profileHearts"></div>
+                </div>
+            </div>
+            
+            <h1 class="text-center mb-4">
+                <span class="animate__animated animate__heartBeat animate__infinite">💖</span> 
+                Journey to Win Inas's Heart 
+                <span class="animate__animated animate__heartBeat animate__infinite">💖</span>
+            </h1>
+            
+            <div class="score-display text-center" id="scoreDisplay"></div>
+            
+            <div class="progress mb-4">
+                <div class="progress-bar" role="progressbar" style="width: 0%" id="loveProgress">
+                    <span class="progress-label"></span>
+                </div>
+            </div>
+
+            <div class="question-card card mb-4">
+                <div class="card-body text-center" id="gameContent">
+                    <h3 class="mb-4">Welcome to your love journey!</h3>
+                    <p class="love-quote">"Every great love story starts with a single moment..."</p>
+                    <button class="btn btn-love" onclick="startGame()">
+                        <i class="fas fa-heart me-2"></i>Begin Journey
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="love-meter">
+        <div class="love-level" id="loveMeter"></div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <h2 class="mb-4 animate__animated animate__heartBeat">
+                        🎊 Congratulations! 🎊
+                    </h2>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="celebration-image mb-4 animate__animated animate__zoomIn">
+                                👰‍♀️ 💑 🤵‍♂️
+                            </div>
+                            <h3 class="animate__animated animate__fadeIn">You've Won Inas's Heart!</h3>
+                            <p class="lead mb-4">Your beautiful love story begins...</p>
+                            
+                            <div class="achievements mb-4">
+                                <h4>Achievements Unlocked:</h4>
+                                <div class="d-flex justify-content-center">
+                                    <div class="achievement-badge" title="Perfect Love">💝</div>
+                                    <div class="achievement-badge" title="True Romance">💖</div>
+                                    <div class="achievement-badge" title="Eternal Bond">💘</div>
+                                </div>
+                            </div>
+
+                            <div class="photo-album">
+                                <div class="memory-photo">💑</div>
+                                <div class="memory-photo">💏</div>
+                                <div class="memory-photo">💝</div>
+                            </div>
+
+                            <div class="celebration-message animate__animated animate__zoomIn mt-4">
+                                <p class="love-quote">"Two hearts, one love, forever together"</p>
+                                <p>💘 Inas & Mehdi Bns 💘</p>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button class="btn btn-love me-2" onclick="createMemory()">
+                                    <i class="fas fa-camera me-2"></i>Capture Moment
+                                </button>
+                                <button class="btn btn-love" onclick="startCelebration()">
+                                    <i class="fas fa-glass-cheers me-2"></i>Celebrate!
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Memory Modal -->
+    <div class="modal fade" id="memoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <h4><i class="fas fa-heart me-2"></i>Your Special Moment</h4>
+                    <div class="memory-canvas p-4">
+                        <div class="animate__animated animate__fadeIn">
+                            <div class="mb-3">💑</div>
+                            <h5>Inas & Mehdi bns</h5>
+                            <p class="love-quote">"Forever Begins Today"</p>
+                            <div class="memory-details mt-3">
+                                <p><i class="fas fa-calendar-heart me-2"></i>Date: January 31, 2025</p>
+                                <p><i class="fas fa-map-marker-heart me-2"></i>Location: Love's Paradise</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    const questions = [
+        {
+            question: "What would you do to make Inas smile every day?",
+            options: [
+                { text: "Send her cute messages and funny memes", score: 85 },
+                { text: "Remember all the little things she likes", score: 90 },
+                { text: "Plan surprise dates and adventures", score: 95 },
+                { text: "All of the above and more!", score: 100 }
+            ],
+            quote: "A smile is the prettiest thing you can wear."
+        },
+        {
+            question: "How would you support Inas's dreams?",
+            options: [
+                { text: "Be her biggest cheerleader", score: 85 },
+                { text: "Help her overcome obstacles", score: 90 },
+                { text: "Celebrate her achievements", score: 95 },
+                { text: "Stand by her through everything", score: 100 }
+            ],
+            quote: "Behind every dream is someone who believes in you."
+        },
+        {
+            question: "What makes your love for Inas unique?",
+            options: [
+                { text: "The way we understand each other", score: 85 },
+                { text: "Our shared dreams and hopes", score: 90 },
+                { text: "The magic in everyday moments", score: 95 },
+                { text: "Our perfect connection", score: 100 }
+            ],
+            quote: "True love stories never have endings."
+        },
+        {
+            question: "How would you describe your future together?",
+            options: [
+                { text: "Full of adventures and travel", score: 85 },
+                { text: "Building a beautiful home", score: 90 },
+                { text: "Growing old together", score: 95 },
+                { text: "A lifetime of endless love", score: 100 }
+            ],
+            quote: "Forever isn't long enough when I'm with you."
+        },
+        {
+            question: "What's your idea of perfect happiness with Inas?",
+            options: [
+                { text: "Quiet evenings together", score: 85 },
+                { text: "Sharing life's adventures", score: 90 },
+                { text: "Building dreams together", score: 95 },
+                { text: "Every moment by her side", score: 100 }
+            ],
+            quote: "Love is not about how many days, months, or years you've been together, it's about how much you love each other every single day."
+        }
+    ];
+
+    let currentQuestion = 0;
+    let totalScore = 0;
+    let progress = 0;
+    let achievements = [];
+
+    // Create floating elements (hearts, stars, etc.)
+    function createFloatingItem() {
+        const items = ['❤️', '✨', '💖', '💝', '💕'];
+        const item = document.createElement('div');
+        item.className = 'floating-item';
+        item.innerHTML = items[Math.floor(Math.random() * items.length)];
+        item.style.left = Math.random() * window.innerWidth + 'px';
+        item.style.animationDuration = (3 + Math.random() * 2) + 's';
+        document.body.appendChild(item);
+        setTimeout(() => item.remove(), 4000);
+    }
+
+    // Create profile hearts animation
+    function createProfileHearts() {
+        const container = document.getElementById('profileHearts');
+        const heart = document.createElement('div');
+        heart.className = 'mini-heart';
+        heart.innerHTML = '💗';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 2 + 's';
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), 3000);
+    }
+
+    function updateScoreDisplay() {
+        const display = document.getElementById('scoreDisplay');
+        display.innerHTML = `Love Score: ${totalScore} points`;
+        display.className = 'score-display text-center animate__animated animate__pulse';
+    }
+
+    function startGame() {
+        setInterval(createFloatingItem, 2000);
+        setInterval(createProfileHearts, 1000);
+        showQuestion();
+        updateScoreDisplay();
+    }
+
+    function showQuestion() {
+        const question = questions[currentQuestion];
+        const content = document.getElementById('gameContent');
+        
+        let html = `
+            <h3 class="mb-4 animate__animated animate__fadeIn">${question.question}</h3>
+            <p class="love-quote mb-4">"${question.quote}"</p>
+            <div class="d-grid gap-3">
+        `;
+        
+        question.options.forEach((option, index) => {
+            html += `
+                <button class="btn btn-love animate__animated animate__fadeInUp" 
+                        style="animation-delay: ${index * 0.2}s"
+                        onclick="answerQuestion(${index})">
+                    <i class="fas fa-heart me-2"></i>${option.text}
+                </button>
+            `;
+        });
+        
+        html += '</div>';
+        content.innerHTML = html;
+    }
+
+    function answerQuestion(index) {
+        const question = questions[currentQuestion];
+        const score = question.options[index].score;
+        totalScore += score;
+        progress += 20;
+        
+        // Update progress bars with animation
+        document.getElementById('loveProgress').style.width = `${progress}%`;
+        document.getElementById('loveMeter').style.height = `${progress}%`;
+        
+        updateScoreDisplay();
+        
+        // Check for achievements
+        checkAchievements(score);
+        
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            setTimeout(showQuestion, 500);
+        } else {
+            showSuccess();
+        }
+    }
+
+    function checkAchievements(score) {
+        if (score >= 95) achievements.push('Perfect Love 💝');
+        if (totalScore >= 450) achievements.push('True Romance 💖');
+        if (progress >= 80) achievements.push('Eternal Bond 💘');
+    }
+
+    function createFirework() {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.left = Math.random() * window.innerWidth + 'px';
+        firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        document.body.appendChild(firework);
+        setTimeout(() => firework.remove(), 2000);
+    }
+
+    function startCelebration() {
+        // Create multiple fireworks
+        for (let i = 0; i < 50; i++) {
+            setTimeout(createFirework, i * 100);
+        }
+        
+        // Create celebration sound
+        const audio = new Audio('data:audio/wav;base64,UklGRn4AAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YVoAAAAMABwAKgA0AD4ASABSAFwAZgBwAHoAhACOAJgAogCsALYAwADKANQA3gDoAPIA/AAAAAAABgD8APgA9ADwAOwA6ADkAOAA3ADYANQAzADEALwAtACsAKQAnACUAJAAiACAAHgAcA==');
+        audio.play().catch(e => console.log('Audio autoplay prevented'));
+    }
+
+    function createMemory() {
+        const memoryModal = new bootstrap.Modal(document.getElementById('memoryModal'));
+        memoryModal.show();
+        startCelebration();
+    }
+
+    function showSuccess() {
+        const modal = new bootstrap.Modal(document.getElementById('successModal'));
+        modal.show();
+        startCelebration();
+        
+        // Display final achievements
+        const achievementsDisplay = document.createElement('div');
+        achievementsDisplay.className = 'achievements-list mt-4';
+        achievementsDisplay.innerHTML = `
+            <h4>🏆 Achievements Unlocked 🏆</h4>
+            <p>${achievements.join(' • ')}</p>
+        `;
+        document.querySelector('.celebration-message').appendChild(achievementsDisplay);
+    }
+
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+</body>
+</html>
